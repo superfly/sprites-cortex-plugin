@@ -21,7 +21,7 @@ Confirm that all commands succeed and that the manifest version is the intended 
 ## Cortex runtime
 
 1. Record `cortex --version`.
-2. Launch `cortex --plugin-dir .` and run `/plugin info sprites`.
+2. Launch `cortex --plugin-dir .` and run `/plugin list`; confirm `sprites` is active and its components are present.
 3. Run `/plugin reload`, then open `/mcp`. Confirm the `sprites` server connects through browser OAuth.
 4. Compare the exposed tool list with the tool map in `skills/sprites/SKILL.md`. As of 2026-08-12 the expected names were:
    - `list_sprites`, `create_sprite`, `destroy_sprite`
@@ -43,7 +43,12 @@ Use a restricted connector in a non-production organization.
 
 ## Publishing
 
+The public source is `https://github.com/superfly/sprites-cortex-plugin`, and the documented install source is `superfly/sprites-cortex-plugin`.
+
+For each release:
+
 1. Update `CHANGELOG.md` and the manifest version.
-2. Confirm the repository URL in the manifest resolves to this repository.
-3. Push the release commit and tag before documenting `cortex plugin install superfly/sprites-cortex-plugin` as generally available.
-4. Verify a clean Git-based install, enable the plugin, and repeat `/sprites-status`.
+2. Confirm the repository URL in the manifest still resolves to this repository.
+3. Push the release commit and matching version tag.
+4. From a clean environment, run `cortex plugin install superfly/sprites-cortex-plugin`, enable `sprites`, and confirm it appears in `cortex plugin list`.
+5. Start a connected Cortex session and repeat `/sprites-status`. Record this separately when a Snowflake connection or browser OAuth is not available in CI.

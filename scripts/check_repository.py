@@ -67,22 +67,44 @@ def frontmatter(path: Path, text: str, errors: list[str]) -> dict[str, Any] | No
     block = text[4:].split("\n---\n", maxsplit=1)[0]
     result: dict[str, Any] = {}
     current: str | None = None
-    for line in block.splitlines():
+    lines = block.splitlines()
+    index = 0
+    while index < len(lines):
+        line = lines[index]
         key_match = re.match(r"^([A-Za-z][A-Za-z0-9_-]*):(?:\s*(.*))?$", line)
         if key_match:
             key, raw_value = key_match.groups()
             if key in result:
                 errors.append(f"{relative}: duplicate frontmatter key {key!r}")
+                index += 1
                 continue
-            result[key] = raw_value.strip(" \"'") if raw_value else []
+            scalar = raw_value.strip() if raw_value else ""
+            if scalar in {">", ">-", ">+", "|", "|-", "|+"}:
+                block_lines: list[str] = []
+                index += 1
+                while index < len(lines) and (
+                    not lines[index].strip() or lines[index][0].isspace()
+                ):
+                    block_lines.append(lines[index].lstrip())
+                    index += 1
+                if scalar.startswith(">"):
+                    result[key] = " ".join(part for part in block_lines if part).strip()
+                else:
+                    result[key] = "\n".join(block_lines).strip()
+                current = None
+                continue
+            result[key] = scalar.strip(" \"'") if scalar else []
             current = key
+            index += 1
             continue
         list_match = re.match(r"^\s*-\s+(.+)$", line)
         if list_match and current is not None and isinstance(result[current], list):
             result[current].append(list_match.group(1).strip(" \"'"))
+            index += 1
             continue
         if line.strip():
             errors.append(f"{relative}: unsupported frontmatter line {line!r}")
+        index += 1
     return result
 
 
@@ -95,8 +117,21 @@ def validate_skill(path: Path, text: str, errors: list[str]) -> None:
         errors.append(f"{relative}: name must match directory {path.parent.name!r}")
     if not data.get("description"):
         errors.append(f"{relative}: description must be non-empty")
-    if set(data) != {"name", "description"}:
-        errors.append(f"{relative}: frontmatter may contain only name and description")
+    unsupported = set(data) - {"name", "description", "tools"}
+    if unsupported:
+        errors.append(
+            f"{relative}: unsupported frontmatter keys: {', '.join(sorted(unsupported))}"
+        )
+    tools = data.get("tools")
+    if tools is not None and not (
+        tools == "*"
+        or (
+            isinstance(tools, list)
+            and tools
+            and all(isinstance(tool, str) and tool for tool in tools)
+        )
+    ):
+        errors.append(f"{relative}: tools must be '*' or a non-empty YAML list")
 
 
 def validate_command(path: Path, text: str, errors: list[str]) -> None:

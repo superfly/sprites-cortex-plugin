@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 from urllib.parse import urlparse
 
+from scripts import check_repository
+
 
 ROOT = Path(__file__).resolve().parents[1]
 KEBAB_CASE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
@@ -77,6 +79,31 @@ class CortexPluginRepositoryTests(unittest.TestCase):
             self.assertRegex(command.stem, KEBAB_CASE)
             self.assertTrue(scalar_frontmatter(command).get("description"), command)
 
+    def test_skill_frontmatter_accepts_documented_tools_and_block_description(self) -> None:
+        text = """---
+name: sprites
+description: >-
+  Use Sprites for remote
+  compute workflows.
+tools:
+- mcp__sprites__exec
+---
+
+# Sprites
+"""
+        errors: list[str] = []
+        data = check_repository.frontmatter(
+            ROOT / "skills/sprites/SKILL.md", text, errors
+        )
+        self.assertEqual(errors, [])
+        self.assertEqual(data["description"], "Use Sprites for remote compute workflows.")
+        self.assertEqual(data["tools"], ["mcp__sprites__exec"])
+        validation_errors: list[str] = []
+        check_repository.validate_skill(
+            ROOT / "skills/sprites/SKILL.md", text, validation_errors
+        )
+        self.assertEqual(validation_errors, [])
+
     def test_smoke_is_keep_by_default(self) -> None:
         text = (ROOT / "commands/sprites-smoke.md").read_text(encoding="utf-8")
         self.assertIn("Keep the Sprite by default", text)
@@ -90,6 +117,7 @@ class CortexPluginRepositoryTests(unittest.TestCase):
         entry = hooks["hooks"]["PreToolUse"][0]
         matcher = re.compile(entry["matcher"])
         for tool in (
+            "create_sprite",
             "destroy_sprite",
             "checkpoint_restore",
             "policy_network_update",
@@ -99,11 +127,11 @@ class CortexPluginRepositoryTests(unittest.TestCase):
             "future_destructive_tool",
         ):
             self.assertIsNotNone(matcher.fullmatch(f"mcp__sprites__{tool}"), tool)
-            self.assertIsNotNone(
-                matcher.fullmatch(f"mcp__plugin_sprites_sprites__{tool}"), tool
-            )
+        self.assertIsNone(matcher.fullmatch("mcp__plugin_sprites_sprites__destroy_sprite"))
         prompt = entry["hooks"][0]["prompt"]
         self.assertIn("$ARGUMENTS", prompt)
+        self.assertIn("Create:", prompt)
+        self.assertIn("proposed exact name", prompt)
         self.assertIn("explicit user confirmation", prompt)
         self.assertIn("offered a checkpoint of current state", prompt)
         self.assertIn("exact complete replacement rules", prompt)

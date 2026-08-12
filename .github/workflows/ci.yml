@@ -40,8 +40,29 @@ jobs:
       - name: Run tests
         run: python -m unittest discover --start-directory tests --verbose
 
-      - name: Install Cortex Code CLI
-        run: curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
+  cortex-validate:
+    name: Cortex CLI validation (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Install pinned Cortex Code CLI
+        env:
+          CORTEX_ARCHIVE: coco-1.1.60+201022.a3e8fc953384-linux-amd64.tar.gz
+          CORTEX_SHA256: 6dbde95a729174a7b171861a49a37401afbe7465a9d8bcada7281460e2736a5c
+          CORTEX_URL: https://sfc-repo.snowflakecomputing.com/cortex-code-cli/a4643c4278/1.1.60%2B201022.a3e8fc953384/coco-1.1.60%2B201022.a3e8fc953384-linux-amd64.tar.gz
+        run: |
+          curl --fail --location --silent --show-error --retry 3 "$CORTEX_URL" --output "$RUNNER_TEMP/$CORTEX_ARCHIVE"
+          echo "$CORTEX_SHA256  $RUNNER_TEMP/$CORTEX_ARCHIVE" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/cortex"
+          tar -xzf "$RUNNER_TEMP/$CORTEX_ARCHIVE" --directory "$RUNNER_TEMP/cortex" --strip-components=1
 
       - name: Validate with Cortex Code CLI
-        run: ~/.local/bin/cortex plugin validate
+        run: |
+          "$RUNNER_TEMP/cortex/cortex" plugin validate

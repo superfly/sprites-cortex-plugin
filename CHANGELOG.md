@@ -2,7 +2,15 @@
 
 All notable changes to this project are documented here.
 
-## 0.1.0 - Unreleased
+## 0.1.1 - 2026-08-12
+
+- Use Cortex's documented `mcp__sprites__*` namespace consistently in hooks, agents, and tests.
+- Classify Sprite creation explicitly while retaining catch-all protection for new MCP tools.
+- Document the prompt-hook latency tradeoff and the now-public Git installation flow.
+- Pin the optional Cortex CI validation to a checksummed CLI archive.
+- Accept documented skill tool allowlists and YAML block descriptions in repository validation.
+
+## 0.1.0 - 2026-08-12
 
 - Add hosted Sprites MCP configuration with explicit OAuth authorization-server discovery.
 - Add Cortex commands for status and a safe, keep-by-default smoke test.

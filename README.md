@@ -8,13 +8,7 @@ This Cortex Code plugin connects to the hosted Sprites MCP server with browser O
 
 ## Install
 
-The repository has not been published yet. Test this checkout directly:
-
-```sh
-cortex --plugin-dir /path/to/sprites-cortex-plugin
-```
-
-After the repository is published at the URL in the manifest, install it with:
+Install the public GitHub repository and enable the plugin:
 
 ```sh
 cortex plugin install superfly/sprites-cortex-plugin
@@ -22,6 +16,12 @@ cortex plugin enable sprites
 ```
 
 Run `/plugin reload` inside an existing session or restart Cortex Code. Both workflows are documented in the [Cortex Code plugin guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-plugins#managing-plugins).
+
+For local development from a checkout instead:
+
+```sh
+cortex --plugin-dir /path/to/sprites-cortex-plugin
+```
 
 ## First use
 
@@ -72,7 +72,7 @@ Full access removes the prefix by granting control over every Sprite in the orga
 - Checkpoint before risky package installs, migrations, bulk edits, and generated-code execution.
 - Never expose secrets, environment dumps, arbitrary files, raw logs, or Snowflake data through a Sprite service.
 
-Cortex Code's normal MCP permission flow still applies. The plugin hook adds a policy check; it does not weaken or auto-approve Cortex permissions. Organizations can further restrict the plugin and `https://sprites.dev/mcp` through connection profiles and managed settings.
+Cortex Code's normal MCP permission flow still applies. The plugin hook adds a policy check; it does not weaken or auto-approve Cortex permissions. The hook intentionally evaluates every `mcp__sprites__*` call, including read-only calls, so a new or renamed destructive tool cannot bypass the guard. This adds one prompt-hook model evaluation per Sprites call, with a 30-second hook timeout. Organizations can further restrict the plugin and `https://sprites.dev/mcp` through connection profiles and managed settings.
 
 ## Long-running work and output
 
