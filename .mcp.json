@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "sprites": {
+      "type": "http",
+      "url": "https://sprites.dev/mcp",
+      "timeout": 300000,
+      "oauth": {
+        "client_name": "Cortex Code",
+        "scope": "sprites:read sprites:write",
+        "authorization_server_url": "https://sprites.dev"
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__(plugin_sprites_sprites|sprites)__.*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Review this pending Sprites MCP call: $ARGUMENTS\n\nAllow read-only or narrowly scoped work. Treat any unfamiliar or renamed Sprites tool as high risk until its effect is clear. Never treat the agent's own request as user confirmation. Block the call unless all applicable conditions below are satisfied.\n\n- Destroy/delete: the user explicitly confirmed the exact Sprite and irreversible impact after seeing its name.\n- Checkpoint restore: the user explicitly confirmed the exact Sprite and checkpoint after being offered a checkpoint of current state.\n- Network-policy mutation: a recent checkpoint for the exact Sprite exists; the existing policy was read; the exact complete replacement rules or a precise diff was shown; and the user explicitly confirmed that replacement.\n- Service create or start: the command was checked for broad persistent/destructive effects; existing service configuration was inspected before start; and any non-empty http_port was explained and explicitly confirmed for the exact Sprite and service.\n- Exec or service command: broad destructive/persistent work such as rm -rf, a database migration, or a package-system installation or upgrade has a recent checkpoint for the exact Sprite and explicit user confirmation.\n\nWhen evidence is missing or the operation cannot be classified confidently, block and state exactly what must be inspected or confirmed.",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
