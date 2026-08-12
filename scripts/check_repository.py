@@ -264,8 +264,16 @@ def main() -> int:
         ROOT / "skills/sprites/SKILL.md",
         ROOT / "docs/release-checklist.md",
         ROOT / "CHANGELOG.md",
+        ROOT / "CODE_OF_CONDUCT.md",
         ROOT / "CONTRIBUTING.md",
         ROOT / "SECURITY.md",
+        ROOT / "SUPPORT.md",
+        ROOT / ".github/CODEOWNERS",
+        ROOT / ".github/dependabot.yml",
+        ROOT / ".github/pull_request_template.md",
+        ROOT / ".github/ISSUE_TEMPLATE/bug_report.yml",
+        ROOT / ".github/ISSUE_TEMPLATE/config.yml",
+        ROOT / ".github/ISSUE_TEMPLATE/feature_request.yml",
     }
     for path in sorted(required):
         if not path.is_file():

@@ -171,6 +171,27 @@ tools:
         self.assertTrue(activation.is_file())
         self.assertIn("/plugin enable sprites", activation.read_text(encoding="utf-8"))
 
+    def test_open_source_community_files_are_packaged(self) -> None:
+        expected = {
+            "CODE_OF_CONDUCT.md",
+            "CONTRIBUTING.md",
+            "LICENSE",
+            "SECURITY.md",
+            "SUPPORT.md",
+            ".github/CODEOWNERS",
+            ".github/dependabot.yml",
+            ".github/pull_request_template.md",
+            ".github/ISSUE_TEMPLATE/bug_report.yml",
+            ".github/ISSUE_TEMPLATE/config.yml",
+            ".github/ISSUE_TEMPLATE/feature_request.yml",
+        }
+        for relative in expected:
+            self.assertTrue((ROOT / relative).is_file(), relative)
+
+        license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+        self.assertIn("MIT License", license_text)
+        self.assertIn("Copyright (c) 2026 Fly.io, Inc.", license_text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -44,7 +44,7 @@ Use a restricted connector in a non-production organization.
 
 ## Publishing
 
-The public source is `https://github.com/superfly/sprites-cortex-plugin`, and the documented install source is `superfly/sprites-cortex-plugin`.
+The canonical source is `https://github.com/superfly/sprites-cortex-plugin`, and the documented install source is `superfly/sprites-cortex-plugin`.
 
 For each release:
 

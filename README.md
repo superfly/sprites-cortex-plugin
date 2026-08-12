@@ -2,13 +2,23 @@
 
 # Sprites for Cortex Code
 
+[![CI](https://github.com/superfly/sprites-cortex-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/superfly/sprites-cortex-plugin/actions/workflows/ci.yml)
+[![Latest tag](https://img.shields.io/github/v/tag/superfly/sprites-cortex-plugin?label=version)](https://github.com/superfly/sprites-cortex-plugin/tags)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Use [Sprites](https://sprites.dev) from Snowflake Cortex Code as persistent, isolated Linux environments for builds, tests, sandboxes, previews, and Snowflake development workflows.
 
 This Cortex Code plugin connects to the hosted Sprites MCP server with browser OAuth. It also contributes operating guidance, a long-work runner agent, a safety hook, and read-only status and end-to-end smoke commands. No Sprites CLI or pasted API token is required.
 
 ## Install
 
-Install the public GitHub repository and enable the plugin:
+### Requirements
+
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) with plugin and remote HTTP MCP support.
+- A Fly.io account with access to a Sprites organization.
+- A browser available for the first-run OAuth flow.
+
+Install from GitHub and enable the plugin:
 
 ```sh
 cortex plugin install superfly/sprites-cortex-plugin
@@ -93,6 +103,13 @@ If tools are missing:
 
 If OAuth is stale, remove and reinstall the plugin-provided MCP configuration through the supported Cortex plugin/MCP flow, then authenticate again. Do not install the Sprites CLI, add a duplicate MCP server, or paste tokens into a shell.
 
+## Support and feedback
+
+- Report reproducible plugin bugs with the [bug report form](https://github.com/superfly/sprites-cortex-plugin/issues/new?template=bug_report.yml).
+- Propose workflow or integration improvements with the [feature request form](https://github.com/superfly/sprites-cortex-plugin/issues/new?template=feature_request.yml).
+- Ask general Sprites questions in the [Fly.io community](https://community.fly.io/) after checking the [Sprites documentation](https://docs.sprites.dev/).
+- Report security issues privately as described in [SECURITY.md](SECURITY.md). Never include credentials or production data in an issue.
+
 ## Development
 
 ```sh
@@ -120,8 +137,8 @@ tests/                Semantic and structural tests
 
 ## Project policies
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CHANGELOG.md](CHANGELOG.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md), [SUPPORT.md](SUPPORT.md), and [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
-MIT © Fly.io, Inc.
+[MIT](LICENSE) © Fly.io, Inc.
