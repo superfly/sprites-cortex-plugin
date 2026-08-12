@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 import unittest
 from pathlib import Path
 from urllib.parse import urlparse
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 from scripts import check_repository
 
 
-ROOT = Path(__file__).resolve().parents[1]
 KEBAB_CASE = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$")
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 

@@ -20,16 +20,17 @@ Confirm that all commands succeed and that the manifest version is the intended 
 
 ## Cortex runtime
 
-1. Record `cortex --version`.
-2. Launch `cortex --plugin-dir .` and run `/plugin list`; confirm `sprites` is active and its components are present.
-3. Run `/plugin reload`, then open `/mcp`. Confirm the `sprites` server connects through browser OAuth.
-4. Compare the exposed tool list with the tool map in `skills/sprites/SKILL.md`. As of 2026-08-12 the expected names were:
+1. Update the pinned Cortex version, archive URL, and SHA-256 in `.github/workflows/ci.yml` to the current stable release using Snowflake's published manifest. Keep the archive checksummed so CI remains reproducible while each plugin release tests the latest supported schema.
+2. Record `cortex --version` and confirm it matches the CI pin.
+3. Launch `cortex --plugin-dir .` and run `/plugin list`; confirm `sprites` is active and its components are present.
+4. Run `/plugin reload`, then open `/mcp`. Confirm the `sprites` server connects through browser OAuth.
+5. Compare the exposed tool list with the tool map in `skills/sprites/SKILL.md`. As of 2026-08-12 the expected names were:
    - `list_sprites`, `create_sprite`, `destroy_sprite`
    - `exec`, `exec_list`, `exec_kill`
    - `checkpoint_create`, `checkpoint_list`, `checkpoint_get`, `checkpoint_restore`
    - `policy_network_get`, `policy_network_update`
    - `service_list`, `service_get`, `service_create`, `service_start`, `service_stop`, `service_logs`
-5. If the contract changed, update the skill, hook matcher, agent tool allowlist, tests, and changelog together. Do not alias or guess changed names.
+6. If the contract changed, update the skill, hook matcher, agent tool allowlist, tests, and changelog together. Do not alias or guess changed names.
 
 ## Safe end-to-end checks
 
