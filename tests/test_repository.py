@@ -66,9 +66,9 @@ class CortexPluginRepositoryTests(unittest.TestCase):
         server = self.mcp["mcpServers"]["sprites"]
         parsed = urlparse(server["url"])
         self.assertEqual(server["type"], "http")
-        self.assertEqual((parsed.scheme, parsed.netloc, parsed.path), ("https", "sprites.dev", "/mcp"))
+        self.assertEqual((parsed.scheme, parsed.netloc, parsed.path), ("https", "mcp.fly.io", ""))
         self.assertGreater(server["timeout"], 0)
-        self.assertEqual(server["oauth"]["authorization_server_url"], "https://sprites.dev")
+        self.assertEqual(server["oauth"]["authorization_server_url"], "https://fly.io/mcp/oauth")
         self.assertTrue(server["oauth"]["client_name"])
         self.assertIn("sprites:read", server["oauth"]["scope"].split())
         self.assertIn("sprites:write", server["oauth"]["scope"].split())

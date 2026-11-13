@@ -37,14 +37,20 @@ cortex --plugin-dir /path/to/sprites-cortex-plugin
 
 1. Run `/sprites-status` or ask Cortex Code to list your Sprites.
 2. Open `/mcp` if authorization is requested.
-3. Authenticate with Fly.io, select the intended organization, and review the connector's name-prefix, creation-cap, and access settings.
+3. Authenticate with Fly.io, select the intended organization, and review the access you are granting, including any Sprite name-prefix and creation-cap restrictions.
 4. Treat an empty list as success: the connector is authenticated and no Sprites are visible under its policy.
 
-The explicit OAuth authorization-server URL in `.mcp.json` is intentional. The MCP endpoint's unauthenticated `401` response currently omits `WWW-Authenticate`, so Cortex cannot reliably discover the authorization server from that response alone.
+The plugin connects to the Fly MCP at `https://mcp.fly.io` and requests only the `sprites:read` and `sprites:write` scopes. The Fly MCP can also serve other Fly.io tools when broader access is granted at consent; this plugin does not request it.
+
+`.mcp.json` pins the OAuth authorization server, `https://fly.io/mcp/oauth`, explicitly. That is the issuer the endpoint's protected-resource metadata names, and pinning it keeps authorization independent of how Cortex handles the `401` discovery challenge.
+
+### Upgrading from 0.1.2 or earlier
+
+Earlier releases connected to `https://sprites.dev/mcp`. We are transitioning to the new Fly MCP server at `https://mcp.fly.io`. The two endpoints have separate OAuth grants, so after updating the plugin every user must open `/mcp` and authorize `sprites` once more. Tool names are unchanged, so existing permission rules for `mcp__sprites__*` keep working. Administrators must allow the new URLs first; see [Enterprise deployment](#enterprise-deployment).
 
 ## What it provides
 
-- Hosted MCP access at `https://sprites.dev/mcp`.
+- Hosted MCP access to Sprites through the Fly MCP at `https://mcp.fly.io`.
 - Persistent, isolated Linux compute without treating the local Cortex shell as the Sprite.
 - Guidance for commands, services, files, checkpoints, and network policy.
 - `sprites-runner`, a bounded-output agent for long builds and tests.
@@ -82,7 +88,7 @@ Full access removes the prefix by granting control over every Sprite in the orga
 - Checkpoint before risky package installs, migrations, bulk edits, and generated-code execution.
 - Never expose secrets, environment dumps, arbitrary files, raw logs, or Snowflake data through a Sprite service.
 
-Cortex Code's normal MCP permission flow still applies. The plugin hook adds a policy check; it does not weaken or auto-approve Cortex permissions. The hook intentionally evaluates every `mcp__sprites__*` call, including read-only calls, so a new or renamed destructive tool cannot bypass the guard. This adds one prompt-hook model evaluation per Sprites call, with a 30-second hook timeout. Organizations can further restrict the plugin and `https://sprites.dev/mcp` through connection profiles and managed settings.
+Cortex Code's normal MCP permission flow still applies. The plugin hook adds a policy check; it does not weaken or auto-approve Cortex permissions. The hook intentionally evaluates every `mcp__sprites__*` call, including read-only calls, so a new or renamed destructive tool cannot bypass the guard. This adds one prompt-hook model evaluation per Sprites call, with a 30-second hook timeout. Organizations can further restrict the plugin and `https://mcp.fly.io` through connection profiles and managed settings.
 
 ## Long-running work and output
 
@@ -90,7 +96,9 @@ The plugin sets a five-minute MCP call timeout. Work that might outlast it shoul
 
 ## Enterprise deployment
 
-Plugin-declared MCP servers can be disabled by administrators. Managed environments should allow `https://sprites.dev/mcp` and may distribute the plugin or an equivalent MCP definition through a Snowflake connection profile. [Cortex Extensions can also store plugins with role-governed access](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/plugins).
+Plugin-declared MCP servers can be disabled by administrators. Managed environments should allow the MCP endpoint `https://mcp.fly.io` and its OAuth authorization server under `https://fly.io/mcp/oauth`, and may distribute the plugin or an equivalent MCP definition through a Snowflake connection profile. [Cortex Extensions can also store plugins with role-governed access](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/plugins).
+
+Environments that allowlisted `https://sprites.dev/mcp` for 0.1.2 or earlier must add the new URLs before users update; the old entry can be removed once no user remains on an earlier release.
 
 ## Troubleshooting
 

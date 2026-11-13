@@ -230,8 +230,8 @@ def validate_mcp(errors: list[str]) -> None:
         server = document["mcpServers"]["sprites"]
     except (OSError, KeyError, TypeError, json.JSONDecodeError, DuplicateKeyError):
         return
-    if server.get("type") != "http" or server.get("url") != "https://sprites.dev/mcp":
-        errors.append(".mcp.json: sprites must use HTTP at https://sprites.dev/mcp")
+    if server.get("type") != "http" or server.get("url") != "https://mcp.fly.io":
+        errors.append(".mcp.json: sprites must use HTTP at https://mcp.fly.io")
     timeout = server.get("timeout")
     if not isinstance(timeout, int) or timeout <= 0:
         errors.append(".mcp.json: timeout must be a positive integer")
@@ -239,9 +239,9 @@ def validate_mcp(errors: list[str]) -> None:
     if not isinstance(oauth, dict):
         errors.append(".mcp.json: sprites OAuth configuration is required")
         return
-    if oauth.get("authorization_server_url") != "https://sprites.dev":
+    if oauth.get("authorization_server_url") != "https://fly.io/mcp/oauth":
         errors.append(
-            ".mcp.json: oauth.authorization_server_url must be https://sprites.dev"
+            ".mcp.json: oauth.authorization_server_url must be https://fly.io/mcp/oauth"
         )
     if not oauth.get("client_name") or not oauth.get("scope"):
         errors.append(".mcp.json: OAuth client_name and scope must be non-empty")
