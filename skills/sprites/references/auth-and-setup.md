@@ -1,8 +1,8 @@
 # Authentication and setup
 
-This plugin connects only to `https://sprites.dev/mcp`. Cortex Code handles OAuth and stores resulting credentials in its configured credential store. Do not install the Sprites CLI or register a duplicate MCP server as a workaround.
+This plugin connects only to the Fly MCP at `https://mcp.fly.io`, requesting the `sprites:read` and `sprites:write` scopes. Cortex Code handles OAuth and stores resulting credentials in its configured credential store. Do not install the Sprites CLI or register a duplicate MCP server as a workaround.
 
-The MCP configuration sets `authorization_server_url` to `https://sprites.dev` explicitly. As verified on 2026-08-12, the endpoint's unauthenticated `401` did not include a `WWW-Authenticate` discovery challenge, while the root protected-resource and authorization-server metadata documents were valid. Recheck those live endpoints with [the release checklist](../../../docs/release-checklist.md) before changing this setting.
+The MCP configuration sets `authorization_server_url` to `https://fly.io/mcp/oauth` explicitly. As verified on 2026-11-13, that is the authorization server named by `https://mcp.fly.io/.well-known/oauth-protected-resource`, and the endpoint's unauthenticated `401` carries a `WWW-Authenticate` challenge pointing at that document. Recheck those live endpoints with [the release checklist](../../../docs/release-checklist.md) before changing this setting.
 
 ## First run
 
@@ -10,7 +10,9 @@ The MCP configuration sets `authorization_server_url` to `https://sprites.dev` e
 2. Run `/plugin reload` or restart Cortex Code.
 3. Run `/sprites-status` or ask Cortex to list Sprites.
 4. Open `/mcp` if authorization is requested and complete browser OAuth for the intended Fly.io organization.
-5. Review the consent screen's Sprite-name prefix, creation cap, and access level.
+5. Review the consent screen's access level and any Sprite-name prefix and creation cap.
+
+Releases up to 0.1.2 used `https://sprites.dev/mcp`. Its OAuth grant does not carry over: after updating, authorize `sprites` again in `/mcp` once.
 
 An empty Sprite list means the integration is authenticated and working.
 
@@ -21,7 +23,7 @@ An empty Sprite list means the integration is authenticated and working.
 1. Confirm `sprites` is active with `/plugin` or `cortex plugin list`.
 2. Run `/plugin reload`.
 3. Inspect `/mcp` for the plugin-provided `sprites` server.
-4. Ask an administrator whether plugin MCP servers are disabled or `https://sprites.dev/mcp` is absent from the managed URL allowlist.
+4. Ask an administrator whether plugin MCP servers are disabled or `https://mcp.fly.io` and its authorization server `https://fly.io/mcp/oauth` are absent from the managed URL allowlist. An allowlist written for `https://sprites.dev/mcp` does not cover them.
 
 Do not use `sprite login`, raw API calls, `cortex mcp add`, or another MCP bridge to hide a plugin-loading or administrator-policy problem.
 

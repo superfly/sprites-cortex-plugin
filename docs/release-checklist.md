@@ -14,9 +14,10 @@ Confirm that all commands succeed and that the manifest version is the intended 
 
 ## OAuth discovery
 
-1. Request `https://sprites.dev/mcp` without credentials. Confirm it returns `401`. If it still lacks `WWW-Authenticate`, keep `oauth.authorization_server_url` set to `https://sprites.dev`.
-2. Fetch `https://sprites.dev/.well-known/oauth-protected-resource`. Confirm its `resource` is `https://sprites.dev/mcp`, its `authorization_servers` includes `https://sprites.dev`, and its scopes include `sprites:read` and `sprites:write`.
-3. Fetch `https://sprites.dev/.well-known/oauth-authorization-server`. Confirm the issuer is `https://sprites.dev`, PKCE `S256` is supported, and authorization, token, and dynamic-registration endpoints are present.
+1. Request `https://mcp.fly.io` without credentials. Confirm it returns `401` with a `WWW-Authenticate` challenge whose `resource_metadata` is `https://mcp.fly.io/.well-known/oauth-protected-resource`.
+2. Fetch `https://mcp.fly.io/.well-known/oauth-protected-resource`. Confirm its `resource` is `https://mcp.fly.io`, its `authorization_servers` includes `https://fly.io/mcp/oauth` (the value of `oauth.authorization_server_url`), and its scopes include `sprites:read` and `sprites:write`.
+3. Fetch `https://fly.io/.well-known/oauth-authorization-server/mcp/oauth`. Confirm the issuer is `https://fly.io/mcp/oauth`, PKCE `S256` is supported, and authorization, token, and dynamic-registration endpoints are present. The issuer has a path, so its metadata lives only at this path-inserted location; `https://fly.io/mcp/oauth/.well-known/oauth-authorization-server` returns `404`.
+4. In Cortex, confirm that browser OAuth completes with the pinned `oauth.authorization_server_url`. If Cortex cannot resolve metadata for an issuer with a path, test with the pin removed so that Cortex follows the `401` challenge instead.
 
 ## Cortex runtime
 
