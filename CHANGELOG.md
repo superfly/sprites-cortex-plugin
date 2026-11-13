@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## Unreleased
+## 0.1.3 - 2026-11-13
 
 - Connect to the Fly MCP at `https://mcp.fly.io` instead of `https://sprites.dev/mcp`, as part of the transition to the new Fly MCP server. The server key, tool names, and requested scopes (`sprites:read sprites:write`) are unchanged.
 - Pin the OAuth authorization server to `https://fly.io/mcp/oauth`, the issuer named by the new endpoint's protected-resource metadata.
